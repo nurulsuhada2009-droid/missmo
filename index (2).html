@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>missmo</title>
+<style>
+:root{--navy:#1c2f5e;--blue:#3b5bb5;--sky:#9db8e8;--grey:#c9cfda;--bg:#aebfdc}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg) repeating-linear-gradient(45deg,#0000 0 10px,#ffffff2e 10px 20px);font-family:Tahoma,Verdana,sans-serif;color:var(--navy);display:flex;align-items:center;justify-content:center;padding:12px}
+#app{width:100%;max-width:440px}
+.win{width:100%;background:var(--grey);border:2px solid #fff;border-right-color:#5c6577;border-bottom-color:#5c6577;box-shadow:5px 5px 0 #1c2f5e55}
+.tb{background:linear-gradient(90deg,var(--navy),#5b7fc4);color:#fff;padding:5px 8px;font-weight:700;font-size:13px;display:flex;justify-content:space-between}
+.bd{position:relative;padding:18px 16px;min-height:540px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+h1{margin:0;font-size:44px;letter-spacing:1px;text-shadow:3px 3px 0 var(--sky)}
+h2{margin:0;font-size:22px}p{margin:0;font-size:14px;line-height:1.5}
+.btn{font:inherit;font-weight:700;padding:11px 18px;background:var(--grey);color:var(--navy);border:2px solid #fff;border-right-color:#5c6577;border-bottom-color:#5c6577;cursor:pointer;text-decoration:none;display:block;width:100%;max-width:300px}
+.btn:active{border-color:#5c6577 #fff #fff #5c6577}
+.btn.p{background:var(--blue);color:#fff}
+.btn.p:not(:disabled){box-shadow:0 0 12px var(--sky)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.blue{width:58px;height:58px;border-radius:50%;background:var(--blue);border:3px solid #fff;box-shadow:0 0 0 2px var(--navy),0 4px 0 var(--navy);cursor:pointer;padding:0}
+.blue:active{transform:translateY(3px);box-shadow:0 0 0 2px var(--navy),0 1px 0 var(--navy)}
+.girl{width:min(66vw,250px);height:auto;filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 7px 6px #1c2f5e55)}
+.q{font-size:19px;font-weight:700}
+.gr{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;width:100%;background:#fff;padding:3px;border:2px inset #8a94a8}
+.cl{aspect-ratio:1;font:700 clamp(12px,4.2vw,18px) Tahoma,Verdana,sans-serif;background:#e8edf5;border:0;color:var(--navy);padding:0}
+.cl.f{background:var(--blue);color:#fff}.cl.s{outline:3px solid var(--navy);outline-offset:-3px}
+.ch{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:12px;font-weight:700}
+.ch span{padding:2px 7px;background:#fff}.ch .d{text-decoration:line-through;opacity:.45}
+.ov{position:fixed;inset:0;background:#1c2f5e99;display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.ov .win{max-width:340px}.ov .bd{min-height:0}
+.nt{font-size:20px;line-height:1.9}
+.tiny{position:absolute;right:0;bottom:0;width:56px;height:56px;padding:0 8px 8px 0;border:0;background:none;color:var(--navy);font-size:12px;opacity:.3;cursor:default;display:flex;align-items:flex-end;justify-content:flex-end;touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+</style></head><body><div id="app"></div>
+<script>
+const $=s=>document.querySelector(s),app=$('#app');
+const YT=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
+const T='I’ll always be with you.';
+const WORDS={
+HAPPY:['a feeling of joy and light','You are my favourite reason to be happy. I love you.'],
+SAD:['a heavy feeling of sorrow','On the days you feel sad, remember that I love you.'],
+ANGRY:['a hot feeling when something seems unfair','Even when you are angry, I love you just the same.'],
+LONELY:['the ache of missing someone','You are never really alone. I love you.'],
+CALM:['a quiet and peaceful feeling','You make my whole world feel calm. I love you.'],
+HOPE:['believing that good things are coming','I hope for every tomorrow with you. I love you.'],
+SHY:['feeling bashful around someone special','Your shy smile is my favourite thing. I love you.'],
+MISS:['the longing for someone who is away','I miss you every single day. I love you.']};
+const PL=[['LONELY',0,0,0,1],['HAPPY',0,9,1,0],['ANGRY',2,0,0,1],['SAD',4,0,1,0],['CALM',9,2,0,1],['HOPE',4,2,1,1],['SHY',6,6,0,1],['MISS',2,7,1,0]];
+let G=[],found=[],F=new Set(),st=null;
+function mk(){const L='ABCDEFGHIJKLMNOPRSTUWY';let s=7;const rnd=()=>(s=(s*9301+49297)%233280)/233280;
+G=Array.from({length:10},()=>Array(10).fill(''));
+PL.forEach(([w,r,c,a,b])=>[...w].forEach((ch,i)=>G[r+a*i][c+b*i]=ch));
+G.forEach(row=>row.forEach((v,j)=>{if(!v)row[j]=L[Math.floor(rnd()*L.length)]}))}
+function draw(){
+$('#g').innerHTML=G.map((row,r)=>row.map((ch,c)=>`<button class="cl${F.has(r+','+c)?' f':''}${st&&st[0]==r&&st[1]==c?' s':''}" onclick="tap(${r},${c})">${ch}</button>`).join('')).join('');
+$('#w').innerHTML=Object.keys(WORDS).map(k=>`<span class="${found.includes(k)?'d':''}">${k}</span>`).join('');
+$('#c').textContent=found.length+' / 8';$('#n').disabled=found.length<8}
+function tap(r,c){
+if(!st){st=[r,c];draw();return}
+const [r1,c1]=st,dr=r-r1,dc=c-c1;st=null;
+if((dr&&dc&&Math.abs(dr)!==Math.abs(dc))||(!dr&&!dc)){draw();return}
+const n=Math.max(Math.abs(dr),Math.abs(dc)),a=Math.sign(dr),b=Math.sign(dc);
+const cells=[...Array(n+1)].map((_,i)=>[r1+a*i,c1+b*i]);
+const s=cells.map(([x,y])=>G[x][y]).join('');
+const w=Object.keys(WORDS).find(k=>!found.includes(k)&&(k===s||k===[...s].reverse().join('')));
+if(w){found.push(w);cells.forEach(([x,y])=>F.add(x+','+y));draw();note(w)}else draw()}
+function note(w){const o=document.createElement('div');o.className='ov';
+o.innerHTML=`<div class="win"><div class="tb"><span>NEW NOTICE</span><span>×</span></div><div class="bd"><h2>${w}</h2><p>Emotion: ${WORDS[w][0]}.</p><p><b>${WORDS[w][1]}</b></p><button class="btn p">OK</button></div></div>`;
+o.querySelector('button').onclick=()=>o.remove();document.body.append(o)}
+function girl(v){
+const W=v=='white',B=v=='baby',R=v=='bride',h=W?'#eef1f6':'#2a1914',sk='#c98c68',len=B?172:230,tee=B?'#9db8e8':'#3b5bb5';
+const e=x=>`<ellipse cx="${x}" cy="108" rx="16" ry="19" fill="#0b0b10"/><circle cx="${x+5}" cy="100" r="5" fill="#fff"/><circle cx="${x-5}" cy="115" r="2.5" fill="#fff"/>`;
+const bs='fill="#b7c3d6" stroke="#8a98b0" stroke-width="2"';
+const bear=`<ellipse cx="110" cy="252" rx="22" ry="20" ${bs}/><ellipse cx="110" cy="254" rx="12" ry="12" fill="#e8edf5"/><circle cx="94" cy="206" r="8" ${bs}/><circle cx="126" cy="206" r="8" ${bs}/><circle cx="110" cy="222" r="20" ${bs}/><ellipse cx="110" cy="228" rx="9" ry="7" fill="#e8edf5"/><ellipse cx="110" cy="225" rx="3.5" ry="2.5" fill="#2a3350"/><circle cx="103" cy="217" r="2.2" fill="#2a3350"/><circle cx="117" cy="217" r="2.2" fill="#2a3350"/><path d="M110 240l-9-5v10zM110 240l9-5v10z" fill="#3b5bb5"/>`;
+const cl=R?`<path d="M72 168Q110 158 148 168L156 218L192 294H28L64 218Z" fill="#fff" stroke="#aab6cc" stroke-width="2"/>`:`<path d="M70 168Q110 158 150 168L160 228H60Z" fill="${tee}"/><ellipse cx="66" cy="176" rx="12" ry="10" fill="${tee}"/><ellipse cx="154" cy="176" rx="12" ry="10" fill="${tee}"/><path d="M64 228H156L152 258H114L110 248L106 258H68Z" fill="#fff" stroke="#aab6cc" stroke-width="2"/><rect x="76" y="256" width="24" height="32" rx="10" fill="${sk}"/><rect x="120" y="256" width="24" height="32" rx="10" fill="${sk}"/>`;
+const arms=`<path d="M66 178Q58 214 88 226M154 178Q162 214 132 226" stroke="${sk}" stroke-width="14" stroke-linecap="round" fill="none"/>`;
+const hands=`<circle cx="88" cy="228" r="8" fill="${sk}"/><circle cx="132" cy="228" r="8" fill="${sk}"/>`;
+const body=`<rect x="100" y="150" width="20" height="26" fill="${sk}"/>${cl}${arms}${bear}${hands}`;
+const fl=x=>`<circle cx="${x[0]}" cy="${x[1]}" r="6" fill="#fff" stroke="#3b5bb5" stroke-width="2"/>`;
+return `<svg viewBox="0 0 220 300" class="girl" role="img" aria-label="Cartoon girl holding a teddy bear">${R?'<path d="M46 62Q110 8 174 62L192 262Q110 280 28 262Z" fill="#fff" opacity=".6" stroke="#c9d3e3"/>':''}<path d="M44 100C44 30 176 30 176 100L176 ${len}Q110 ${len+14} 44 ${len}Z" fill="${h}"/><g${B?' transform="translate(110 160) scale(.8) translate(-110 -160)"':''}>${body}</g><circle cx="52" cy="108" r="9" fill="${sk}"/><circle cx="168" cy="108" r="9" fill="${sk}"/><circle cx="110" cy="100" r="58" fill="${sk}"/>${e(86)}${e(134)}<ellipse cx="68" cy="132" rx="11" ry="7" fill="#e58a8a" opacity=".55"/><ellipse cx="152" cy="132" rx="11" ry="7" fill="#e58a8a" opacity=".55"/><circle cx="110" cy="126" r="1.8" fill="#a86a4c"/><path d="M104 141Q110 147 116 141" stroke="#7a3f33" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M110 42C70 46 46 72 50 114C62 86 84 68 110 64ZM110 42C150 46 174 72 170 114C158 86 136 68 110 64Z" fill="${h}"/>${R?fl([86,48])+fl([110,42])+fl([134,48]):''}</svg>`}
+const ch=(v,n)=>()=>`${girl(v)}<p class="q">${T}</p><button class="blue" aria-label="next" onclick="go(${n})"></button>`;
+const P=[
+()=>`<h1>missmo</h1><p>A little something to add flavour to your mood:</p><a class="btn" target="_blank" rel="noopener" href="${YT('The Cure Olivia Rodrigo')}">♪ The Cure – Olivia Rodrigo</a><a class="btn" target="_blank" rel="noopener" href="${YT('Treat You Better Shawn Mendes')}">♪ Treat You Better – Shawn Mendes</a><button class="btn p" onclick="go(1)">miss</button>`,
+()=>{found=[];F=new Set();st=null;mk();return `<h2>Find 8 emotions</h2><p>Tap the first letter, then the last letter of a word.</p><div id="g" class="gr"></div><div id="w" class="ch"></div><p>Found: <b id="c">0 / 8</b></p><button id="n" class="btn p" onclick="go(2)" disabled>Continue</button>`},
+ch('baby',3),ch('normal',4),ch('bride',5),ch('white',6),
+()=>`<div class="nt">Stop.<br>Put the phone down.<br>Close your eyes.<br>Breathe slowly and be quiet now.<br><b>Sweet dreams.</b></div><button class="btn p" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:auto;min-width:140px" onclick="go(7)">Next</button>`,
+()=>`<h2>missmo</h2><p>ig : lrns.__<br>tiktok : nrulsuhdhh</p><p>by suhadah</p><button class="btn p" onclick="go(0)">Homepage</button>`];
+function hold(){let t;const b=$('#h');b.onpointerdown=e=>{e.preventDefault();clearTimeout(t);t=setTimeout(()=>go(7),2000)};
+['onpointerup','onpointercancel'].forEach(e=>b[e]=()=>clearTimeout(t));b.oncontextmenu=e=>e.preventDefault()}
+function go(n){app.innerHTML=`<div class="win"><div class="tb"><span>missmo.exe</span><span>_ □ ×</span></div><div class="bd">${P[n]()}</div></div>`;
+if(n==1)draw();scrollTo(0,0)}
+go(0);
+</script></body></html>
